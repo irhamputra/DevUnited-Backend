@@ -7,6 +7,7 @@ const passport = require('passport');
 
 const User = require('../../models/User');
 const validationRegister = require('../../validation/register');
+const validationLogin = require('../../validation/login');
 
 require('dotenv').config();
 
@@ -55,13 +56,21 @@ router.post('/register', (req, res) => {
 
 // Login User
 router.post('/login', (req, res) => {
+    const { err, isValid } = validationLogin(req.body);
+
+    // isValid check return err
+    if (!isValid){
+        return res.status(400).json(err)
+    }
+
     const email = req.body.email;
     const password = req.body.password;
 
     User.findOne({email})
         .then(user => {
             // check if email not found
-            if (!user) return res.status(404).json({email: 'Email not found!'});
+            err.email = 'Email not found!';
+            if (!user) return res.status(404).json(err);
 
             // compare password user
             bcrypt.compare(password, user.password)
@@ -86,7 +95,8 @@ router.post('/login', (req, res) => {
                                 })
                             });
                     } else {
-                        res.status(400).json({password: 'Password incorrect'})
+                        err.password  = 'Password incorrect';
+                        res.status(400).json(err)
                     }
                 })
         })
