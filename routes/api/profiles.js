@@ -25,6 +25,8 @@ router.get(
     });
 
 router.post('/', (req, res) => {
+
+    // TODO: Field handling form
     const profileFields = {};
     const err = {};
 
@@ -47,7 +49,7 @@ router.post('/', (req, res) => {
     if (req.body.instagram) profileFields.instagram = req.body.instagram;
     if (req.body.dribbble) profileFields.dribbble = req.body.dribbble;
 
-
+    // TODO: Update & Confirm  => POSTMAN
     Profile.findOne({user: req.user.id})
         .then(profile => {
             if (profile) {
